@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-interface CreateAppsRequestModel {
-  bitBucketURL: string;
-  serviceNames: string[];
+interface ServicesAndAppsPageProps {
+  apiLinks: { [key: string]: string };
+  poolNames: string[];
 }
 
-const ServicesAndAppsPage: React.FC = () => {
+const ServicesAndAppsPage: React.FC<ServicesAndAppsPageProps> = ({ apiLinks, poolNames }) => {
   const [bitBucketURL, setBitBucketURL] = useState('');
   const [serviceNames, setServiceNames] = useState<string[]>([]);
   const [message, setMessage] = useState('');
@@ -17,9 +17,10 @@ const ServicesAndAppsPage: React.FC = () => {
     setIsLoading(true);
     setMessage('');
     
-    const requestData: CreateAppsRequestModel = {
+    const requestData = {
       bitBucketURL,
-      serviceNames
+      serviceNames,
+      newPools: poolNames
     };
 
     try {
@@ -46,7 +47,7 @@ const ServicesAndAppsPage: React.FC = () => {
 
   return (
     <div>
-      <h1>Create New Services and Applications</h1>
+      <h2>Create New Services and Applications</h2>
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="bitBucketURL">BitBucket URL:</label>
@@ -68,6 +69,14 @@ const ServicesAndAppsPage: React.FC = () => {
             required
           />
         </div>
+        <div>
+          <h3>Selected Pools:</h3>
+          <ul>
+            {poolNames.map((poolName, index) => (
+              <li key={index}>{poolName}</li>
+            ))}
+          </ul>
+        </div>
         <button type="submit" disabled={isLoading}>
           {isLoading ? 'Creating...' : 'Create Services and Push Application'}
         </button>
@@ -78,3 +87,9 @@ const ServicesAndAppsPage: React.FC = () => {
 };
 
 export default ServicesAndAppsPage;
+
+
+<ServicesAndAppsPage 
+  apiLinks={migrationData.apiLinks} 
+  poolNames={migrationData.poolNames} 
+/>
